@@ -13,6 +13,7 @@
   
   <script>
   import { getCveList, removeCve } from '../models/cves'
+  import { checkKeywordByTerm, addKeywordCveList } from '../models/keywords'
   export default {
     name: 'CveListPage',
     data() {
@@ -24,6 +25,14 @@
       remove(item) {
         const self = this;
         removeCve(item.cveId)
+          .then(function(cve){
+            return Promise.all(cve.terms.map((t) => {
+              return checkKeywordByTerm(t)
+              .then(function(keyword){
+                return addKeywordCveList(t, keyword.cveIds.filter(function(i){ return i !== item.cveId }))
+              })
+            }))
+          })
           .then(function(){
             self.getList();
           })

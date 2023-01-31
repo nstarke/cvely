@@ -73,10 +73,6 @@ const removeCve = (id) => {
     return Db().then(function(db){
         return new Promise((resolve, reject) => {
             let trans = db.transaction(['cves'], 'readwrite');
-            trans.oncomplete = () => {
-                resolve();
-            };
-    
             trans.onerror = e => {
                 reject(e);
             }
@@ -88,6 +84,7 @@ const removeCve = (id) => {
                     cve.filtered = true;
                     store.put(cve)
                 }
+                resolve(cve);
             }
         });
     })
