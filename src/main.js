@@ -14,7 +14,7 @@ const routes = [
   { path: '/keyword-list', component: KeywordListPage },
   { path: '/keyword/:id', component: KeywordPage, props: true },
   { path: '/cve-list', component: CveListPage },
-  { path: '/cve/:id', component: CvePage, props: true }
+  { path: '/cve/:cveId', component: CvePage, props: true }
 ]
 
 const router = createRouter({
