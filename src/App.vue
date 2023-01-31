@@ -14,7 +14,7 @@
 
 <script>
 import { pullKeyword } from './net/cve'
-import { getKeywordList } from './models/keywords'
+import { getKeywordList, addKeywordCveList } from './models/keywords'
 import { addCveListByKeyword } from './models/cves'
 export default {
   name: 'App',
@@ -26,7 +26,10 @@ export default {
             return pullKeyword(i.term)
               .then(function(data){
                 return addCveListByKeyword(data, i.term)
-            })
+              })
+              .then(function(cveIds) {
+                return addKeywordCveList(i.term, cveIds)
+              })
           }))
       });
     }

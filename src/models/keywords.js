@@ -1,5 +1,32 @@
 import Db from '../db/connection'
 
+const addKeywordCveList = (keyword, cveList) => {
+    return checkKeywordByTerm(keyword)
+        .then(function(term){
+            return Db().then(function(db){
+                return new Promise((resolve, reject) => {
+        
+                    let trans = db.transaction(['keywords'], 'readwrite');
+                    trans.oncomplete = () => {
+                        resolve();
+                    };
+            
+                    trans.onerror = e => {
+                        reject(e);
+                    }
+            
+                    let store = trans.objectStore('keywords');
+                    term.cveIds = term.cveIds.concat(cveList)
+                    store.put(term);
+                });
+            })
+            .catch(function(e) {
+                console.log('addKeyword failed');
+                console.error(e);
+            })
+        })
+};
+
 const addKeyword = (keyword) => {
     return Db().then(function(db){
         return new Promise((resolve, reject) => {
@@ -14,7 +41,7 @@ const addKeyword = (keyword) => {
             }
     
             let store = trans.objectStore('keywords');
-            store.add({ createdAt: new Date(), term: keyword });
+            store.add({ createdAt: new Date(), term: keyword, cveIds: [] });
         });
     })
     .catch(function(e) {
@@ -105,10 +132,6 @@ const checkKeywordByTerm = (term) => {
 
             let trans = db.transaction(['keywords'], 'readonly');
 
-            trans.oncomplete = () => {
-                resolve();
-            };
-    
             trans.onerror = e => {
                 reject(e);
             }
@@ -119,7 +142,7 @@ const checkKeywordByTerm = (term) => {
             const cursorRequest = index.openCursor(range);
             cursorRequest.onsuccess = (e) => {
                 const cursor = e.target.result;
-                resolve(!!cursor);
+                resolve(cursor ? cursor.value : null);
             }
         });
     })
@@ -128,10 +151,12 @@ const checkKeywordByTerm = (term) => {
         console.error(e);
     })
 }
+
 export { 
     getKeywordList, 
     addKeyword, 
     removeKeyword, 
     getKeywordById,
-    checkKeywordByTerm
+    checkKeywordByTerm,
+    addKeywordCveList
  }

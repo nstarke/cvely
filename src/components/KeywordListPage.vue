@@ -6,7 +6,8 @@
         <input type="button" @click="add" value="Add" :disabled="currentTerm.length === 0 || alreadyAdded">
         <ul>
             <li v-for="(item, idx) in keywordList" v-bind:key="item.id">
-                {{ idx + 1 }} - {{ item.term }} <input type="button" value="Remove Term" @click="remove(item)">
+                <p>{{ idx + 1 }} - {{ item.term }} <input type="button" value="Remove Term" @click="remove(item)"></p>
+                <p>{{  item.cveIds.length }} CVEs aggregated for this keyword</p>
             </li>
         </ul>
     </div>

@@ -1,15 +1,17 @@
 import Db from '../db/connection'
 
 const addCveListByKeyword = (cveList, keyword) => {
+    let cveIds = [];
     return new Promise(function(resolve, reject){
         return Promise.all(cveList.map(cve => {
+            cveIds.push(cve.cve.id);
             return getCveByCveId(cve.cve.id)
                 .then(res => {
                     return Db()
                         .then(function(db){
                             let trans = db.transaction(['cves'], 'readwrite');
                             trans.oncomplete = () => {
-                                resolve();
+                                resolve(cveIds);
                             };
                     
                             trans.onerror = e => {
