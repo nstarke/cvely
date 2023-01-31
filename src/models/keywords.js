@@ -41,7 +41,7 @@ const addKeyword = (keyword) => {
             }
     
             let store = trans.objectStore('keywords');
-            store.add({ createdAt: new Date(), term: keyword, cveIds: [] });
+            store.add({ createdAt: new Date().getTime(), term: keyword, cveIds: [] });
         });
     })
     .catch(function(e) {

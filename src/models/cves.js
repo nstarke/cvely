@@ -26,7 +26,7 @@ const addCveListByKeyword = (cveList, keyword) => {
                                 }
                             } else {
                                 return store.add({ 
-                                    createdAt: new Date(), 
+                                    createdAt: new Date().getTime(), 
                                     terms: [keyword], 
                                     cveId: cve.cve.id, 
                                     cve: cve.cve, 
@@ -115,9 +115,46 @@ const getCveByCveId = (cveId) => {
     })
 }
 
+const getCveListByDate = (currentDate) => {
+    return Db().then(function(db){
+        return new Promise((resolve, reject) => {
+
+            let trans = db.transaction(['cves'], 'readonly');
+            let cveList = [];
+
+            trans.oncomplete = () => {
+                resolve(cveList);
+            }
+
+            trans.onerror = e => {
+                reject(e);
+            }
+    
+            let store = trans.objectStore('cves');
+            let start = currentDate.getTime();
+            start = start - (start % 86400000)
+            const range = IDBKeyRange.bound(start, start + 86400000);
+            const index = store.index('dateIdx');
+            const cursorRequest = index.openCursor(range);
+            cursorRequest.onsuccess = (e) => {
+                const cursor = e.target.result;
+                if (cursor) {
+                    cveList.push(cursor.value);
+                    cursor.continue();
+                } 
+            }
+        });
+    })
+    .catch(function(e){
+        console.log('removeKeyword failed');
+        console.error(e);
+    })
+}
+
 export { 
     addCveListByKeyword, 
     removeCve, 
     getCveByCveId,
-    getCveList
+    getCveList,
+    getCveListByDate
  }

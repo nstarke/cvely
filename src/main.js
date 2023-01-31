@@ -6,6 +6,7 @@ import KeywordListPage from './components/KeywordListPage.vue'
 import KeywordPage from './components/KeywordPage.vue'
 import CveListPage from './components/CveListPage.vue'
 import CvePage from './components/CvePage.vue'
+import DatePage from './components/DatePage.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
@@ -14,7 +15,8 @@ const routes = [
   { path: '/keyword-list', component: KeywordListPage },
   { path: '/keyword/:id', component: KeywordPage, props: true },
   { path: '/cve-list', component: CveListPage },
-  { path: '/cve/:cveId', component: CvePage, props: true }
+  { path: '/cve/:cveId', component: CvePage, props: true },
+  { path: '/date', component: DatePage }
 ]
 
 const router = createRouter({
