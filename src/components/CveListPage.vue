@@ -4,13 +4,14 @@
       <ul>
           <li v-for="(item, idx) in cveList" v-bind:key="item.cveId">
               {{ idx }} - {{ item.cveId }} found for term {{ item.term }}
+              <input type="button" value="Remove CVE" @click="remove(item)">
           </li>
       </ul>
     </div>
   </template>
   
   <script>
-  import { getCveList } from '../models/cves'
+  import { getCveList, removeCve } from '../models/cves'
   export default {
     name: 'CveListPage',
     data() {
@@ -19,6 +20,13 @@
       }
     },
     methods: {
+      remove(item) {
+        const self = this;
+        removeCve(item.cveId)
+          .then(function(){
+            self.getList();
+          })
+      },
       getList() {
         const self = this;
         getCveList()
