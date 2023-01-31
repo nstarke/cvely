@@ -59,6 +59,7 @@ export default {
         setTimeout(function() {
           pullKeyword(term)
               .then(function(data){
+                if (data.length === 0) return resolve();
                 return addCveListByKeyword(data, term)
               })
               .then(function(cveIds) {
