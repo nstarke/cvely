@@ -1,6 +1,6 @@
 <template>
     <h2>Keyword "{{ currentKeyword }}"</h2>
-    <div class="hello">
+    <div>
         <div v-if="cveList.length === 0">
             <p>No Results</p>
         </div>
@@ -16,7 +16,7 @@
   </template>
   
   <script>
-  import { getKeywordById } from '../models/keywords'
+  import { getKeywordById, removeKeyword } from '../models/keywords'
   export default {
     name: 'KeywordPage',
     props: {
@@ -39,6 +39,13 @@
                     self.currentKeyword = k.term
                     self.cveList = k.cveIds
                     self.createdDate = k.createdAt
+                })
+        },
+        remove(item) {
+            const self = this;
+            removeKeyword(item.id)
+                .then(function() {
+                    self.getList()
                 })
         }
     },

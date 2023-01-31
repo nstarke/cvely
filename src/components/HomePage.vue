@@ -1,5 +1,5 @@
 <template>
-    <div class="hello">
+    <div>
         <p>CVE Feed is a way to manage CVE data</p>
     </div>
   </template>

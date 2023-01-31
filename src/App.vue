@@ -1,7 +1,7 @@
 <template>
   <h1>CVE Feed</h1>
   <div>
-    <input type="button" value="Sync" @click="sync" :disabled="syncing">
+    <input class="btn btn-success" type="button" value="Sync" @click="sync" :disabled="syncing">
     <p v-if="commsProblems">
       Problems reaching NVD.
     </p>
@@ -78,5 +78,6 @@ export default {
 <style>
 ul {
   list-style: none;
+  padding-left: 0 !important;
 }
 </style>

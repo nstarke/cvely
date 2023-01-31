@@ -9,6 +9,9 @@ import CvePage from './components/CvePage.vue'
 import DatePage from './components/DatePage.vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
 
+import "bootstrap/dist/css/bootstrap.min.css"
+import "bootstrap"
+
 const routes = [
   { path: '/', component: HomePage },
   { path: '/about', component: AboutPage },

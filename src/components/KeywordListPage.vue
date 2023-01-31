@@ -1,13 +1,15 @@
 <template>
     <h2>Keywords</h2>
-    <div class="hello">
+    <div>
         <p>{{ msg }}</p>
-        <input placeholder="New Keyword" type="text" v-model="currentTerm" @blur="check" v-on:keyup="check">
-        <input type="button" @click="add" value="Add" :disabled="currentTerm.length === 0 || alreadyAdded">
+        <div class="controls">
+            <input placeholder="New Keyword" type="text" v-model="currentTerm" @blur="check" v-on:keyup="check">
+            <input class="btn btn-primary" type="button" @click="add" value="Add" :disabled="currentTerm.length === 0 || alreadyAdded">
+        </div>
         <ul>
             <li v-for="(item, idx) in keywordList" v-bind:key="item.id">
                 <div>
-                    <p>{{ idx + 1 }} - {{ item.term }} <input type="button" value="Remove Term" @click="remove(item)"></p>
+                    <p>{{ idx + 1 }} - {{ item.term }} <input class="btn btn-danger" type="button" value="Remove Term" @click="remove(item)"></p>
                     <p>{{  item.cveIds.length }} CVEs aggregated for this keyword</p>
                     <router-link :to="'/keyword/' + item.id">See Details</router-link>
                 </div>

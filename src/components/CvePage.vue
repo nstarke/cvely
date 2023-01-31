@@ -1,5 +1,5 @@
 <template>
-    <div class="hello">
+    <div>
       <h2>{{ cveId }}</h2>
       <div v-if="!!cve.cve">
         <p>

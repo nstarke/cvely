@@ -1,10 +1,10 @@
 <template>
-    <div class="hello">
-    <label for="start">Show CVEs from this Date:</label>
-    <input type="date" id="start" v-model="createdDate">
-    <h2>CVE List for {{ createdDate }}</h2>
-    <p v-if="cveList.length === 0">No CVEs for this date.</p>
-      <ul>
+    <div>
+      <label for="start">Show CVEs from this Date:</label>
+      <input type="date" id="start" v-model="createdDate">
+      <h2>CVE List for {{ createdDate }}</h2>
+      <p v-if="cveList.length === 0">No CVEs for this date.</p>
+      <ul class="container">
           <li v-for="(item, idx) in cveList" v-bind:key="item.cveId">
               {{ idx + 1}} - {{ item.cveId }} ({{  item.terms.join(', ') }})
               <router-link :to="'/cve/' + item.cveId">See Details</router-link>
