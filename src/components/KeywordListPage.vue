@@ -6,14 +6,14 @@
         <input type="button" @click="add" value="Add" :disabled="currentTerm.length === 0 || alreadyAdded">
         <ul>
             <li v-for="(item, idx) in keywordList" v-bind:key="item.id">
-                {{ idx }} - {{ item.term }} (Created {{ item.createdAt }})
+                {{ idx + 1 }} - {{ item.term }} <input type="button" value="Remove Term" @click="remove(item)">
             </li>
         </ul>
     </div>
   </template>
   
   <script>
-  import { getKeywordList, addKeyword, checkKeywordByTerm } from '../models/keywords'
+  import { getKeywordList, addKeyword, checkKeywordByTerm, removeKeyword } from '../models/keywords'
   export default {
     name: 'KeywordListPage',
     data() {
@@ -44,6 +44,13 @@
                     }
                 })
             } 
+        },
+        remove(item) {
+            const self = this;
+            removeKeyword(item.id)
+                .then(function() {
+                    self.getList()
+                })
         },
         check() {
             this.alreadyAdded = false;
