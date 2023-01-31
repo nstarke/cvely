@@ -1,7 +1,7 @@
 <template>
   <h1>CVE Feed</h1>
   <div>
-    <input type="button" value="Sync" @click="sync">
+    <input type="button" value="Sync" @click="sync" :disabled="syncing">
   </div>
   <router-view></router-view>
   <ul>
@@ -18,8 +18,22 @@ import { getKeywordList, addKeywordCveList } from './models/keywords'
 import { addCveListByKeyword } from './models/cves'
 export default {
   name: 'App',
+  data() {
+    return {
+      syncing: false
+    }
+  },
+  watch: {
+    '$route' (to, from) {
+      if (to.path === '/cve-list' || from.path === '/cve-list') {
+        this.sync()
+      }
+    }
+  },
   methods: {
     sync() {
+      const self = this;
+      self.syncing = true;
       getKeywordList()
         .then(function(keywordList){
           return Promise.all(keywordList.map(function(i){
@@ -29,6 +43,9 @@ export default {
               })
               .then(function(cveIds) {
                 return addKeywordCveList(i.term, cveIds)
+              })
+              .then(function(){
+                self.syncing = false;
               })
           }))
       });
