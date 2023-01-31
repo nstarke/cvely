@@ -9,9 +9,8 @@
         <ul>
             <li v-for="(item, idx) in keywordList" v-bind:key="item.id">
                 <div>
-                    <p>{{ idx + 1 }} - {{ item.term }} <input class="btn btn-danger" type="button" value="Remove Term" @click="remove(item)"></p>
+                    <p>{{ idx + 1 }} - <router-link :to="'/keyword/' + item.id">{{ item.term }}</router-link> <input class="btn btn-danger" type="button" value="Remove Term" @click="remove(item)"></p>
                     <p>{{  item.cveIds.length }} CVEs aggregated for this keyword</p>
-                    <router-link :to="'/keyword/' + item.id">See Details</router-link>
                 </div>
             </li>
         </ul>

@@ -9,7 +9,7 @@
         </div>
         <ul>
             <li v-for="(item, idx) in cveList" v-bind:key="item">
-                {{ idx + 1 }} - {{ item }} <router-link :to="'/cve/' + item">See Details</router-link>
+                {{ idx + 1 }} - <router-link :to="'/cve/' + item">{{ item }}</router-link>
             </li>
         </ul>
     </div>
