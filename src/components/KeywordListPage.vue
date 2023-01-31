@@ -9,6 +9,7 @@
                 <div>
                     <p>{{ idx + 1 }} - {{ item.term }} <input type="button" value="Remove Term" @click="remove(item)"></p>
                     <p>{{  item.cveIds.length }} CVEs aggregated for this keyword</p>
+                    <router-link :to="'/keyword/' + item.id">See Details</router-link>
                 </div>
             </li>
         </ul>

@@ -35,13 +35,11 @@ export default {
           return Promise.all(keywordList.map(function(i){
             return pullKeyword(i.term)
               .then(function(data){
+                self.syncing = false;
                 return addCveListByKeyword(data, i.term)
               })
               .then(function(cveIds) {
                 return addKeywordCveList(i.term, cveIds)
-              })
-              .then(function(){
-                self.syncing = false;
               })
               .catch(function() {
                 self.syncing = false;

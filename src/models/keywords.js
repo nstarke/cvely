@@ -108,16 +108,16 @@ const getKeywordById = (id) => {
         return new Promise((resolve, reject) => {
 
             let trans = db.transaction(['keywords'], 'readwrite');
-            trans.oncomplete = () => {
-                resolve();
-            };
-    
+            
             trans.onerror = e => {
                 reject(e);
             }
     
             let store = trans.objectStore('keywords');
-            store.get(id);
+            store.get(id).onsuccess = function(e) {
+                const result = e.target.result
+                resolve(result)
+            }
         });
     })
     .catch(function(e){
