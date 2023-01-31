@@ -16,7 +16,7 @@ const addKeywordCveList = (keyword, cveList) => {
                     }
             
                     let store = trans.objectStore('keywords');
-                    term.cveIds = term.cveIds.concat(cveList)
+                    term.cveIds = cveList
                     store.put(term);
                 });
             })
