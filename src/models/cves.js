@@ -4,7 +4,7 @@ const addCveListByKeyword = (cveList, keyword) => {
     let cveIds = [];
     return new Promise(function(resolve, reject){
         return Promise.all(cveList.map(cve => {
-            cveIds.push(cve.cve.id);
+            if (!cve.filtered) cveIds.push(cve.cve.id);
             return getCveByCveId(cve.cve.id)
                 .then(res => {
                     return Db()
@@ -12,7 +12,7 @@ const addCveListByKeyword = (cveList, keyword) => {
                             let trans = db.transaction(['cves'], 'readwrite');
                             trans.oncomplete = () => {
                                 resolve(cveIds);
-                            };
+                            }
                     
                             trans.onerror = e => {
                                 reject(e);
