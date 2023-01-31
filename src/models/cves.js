@@ -1,30 +1,35 @@
 import Db from '../db/connection'
 
 const addCveListByKeyword = (cveList, keyword) => {
-    return Db()
-    .then(function(db){
-        return new Promise((resolve, reject) => {
-
-            let trans = db.transaction(['cves'], 'readwrite');
-            trans.oncomplete = () => {
-                resolve();
-            };
-    
-            trans.onerror = e => {
-                reject(e);
-            }
-    
-            let store = trans.objectStore('cves');
-            cveList.map(cve => {
-                return store.put({ createdAt: new Date(), term: keyword, cveId: cve.cve.id, cve: cve.cve });
-            })
-        });
+    return new Promise(function(resolve, reject){
+        return Promise.all(cveList.map(cve => {
+            return getCveByCveId(cve.cve.id)
+                .then(res => {
+                    return Db()
+                        .then(function(db){
+                            let trans = db.transaction(['cves'], 'readwrite');
+                            trans.oncomplete = () => {
+                                resolve();
+                            };
+                    
+                            trans.onerror = e => {
+                                reject(e);
+                            }
+                    
+                            let store = trans.objectStore('cves');
+                            if (res) {
+                                if (!res.terms.includes(keyword)) {
+                                    res.terms.push(keyword)
+                                    return store.put(res)
+                                }
+                            } else {
+                                return store.add({ createdAt: new Date(), terms: [keyword], cveId: cve.cve.id, cve: cve.cve });
+                            }
+                        })
+                    })
+        }))
     })
-    .catch(function(e) {
-        console.log('addCve failed');
-        console.error(e);
-    })
-};
+}
 
 const getCveList = () => {
 	return Db().then(function(db){
@@ -83,17 +88,15 @@ const getCveByCveId = (cveId) => {
     return Db().then(function(db){
         return new Promise((resolve, reject) => {
 
-            let trans = db.transaction(['cves'], 'readwrite');
-            trans.oncomplete = (e) => {
-                resolve(e.target.result);
-            };
-    
+            let trans = db.transaction(['cves'], 'readonly');
             trans.onerror = e => {
                 reject(e);
             }
     
             let store = trans.objectStore('cves');
-            store.get(cveId);
+            store.get(cveId).onsuccess = function(e){
+                resolve(e.target.result);
+            }
         });
     })
     .catch(function(e){
