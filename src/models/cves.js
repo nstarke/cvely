@@ -23,12 +23,12 @@ const addCveByKeyword = (keyword) => {
     })
 };
 
-const getCvesForKeyword = (keyword) => {
+const getCveList = () => {
 	return Db().then(function(db){
         return new Promise((resolve, reject) => {
             let trans = db.transaction(['cves'], 'readonly');
             trans.oncomplete = () => {
-                resolve(keywords);
+                resolve(cves);
             };
             
             trans.onerror = e => {
@@ -36,19 +36,19 @@ const getCvesForKeyword = (keyword) => {
             }
             
             let store = trans.objectStore('cves');
-            let keywords = [];
+            let cves = [];
             
             store.openCursor().onsuccess = e => {
                 let cursor = e.target.result;
                 if (cursor) {
-                    keywords.push(cursor.value)
+                    cves.push(cursor.value)
                     cursor.continue();
                 }
             };
         });
     })
     .catch(function(e){
-        console.log('getCvesForKeyword failed');
+        console.log('getCveList failed');
         console.error(e);
     })
 }
@@ -90,7 +90,7 @@ const getCveByCveId = (cveId) => {
             }
     
             let store = trans.objectStore('cves');
-            store.get(id);
+            store.get(cveId);
         });
     })
     .catch(function(e){
@@ -128,10 +128,11 @@ const checkCveByCveId = (cveId) => {
         console.error(e);
     })
 }
+
 export { 
-    getKeywordList, 
-    addKeyword, 
-    removeKeyword, 
-    getKeywordById,
-    checkKeywordByTerm
+    addCveByKeyword, 
+    removeCve, 
+    getCveByCveId,
+    checkCveByCveId,
+    getCveList
  }

@@ -5,8 +5,23 @@
   </template>
   
   <script>
+  import { getCveList } from '../models/cves'
   export default {
-    name: 'CvePage',
+    name: 'CveListPage',
+    data() {
+      return {
+        cveList: [] 
+      }
+    },
+    methods: {
+      getList() {
+        const self = this;
+        getCveList()
+          .then(function(cveList){
+              self.cveList = cveList;
+          })
+      }
+    }
   }
   </script>
   
