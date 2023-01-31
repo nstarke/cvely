@@ -2,6 +2,10 @@
   <h1>CVE Feed</h1>
   <div>
     <input type="button" value="Sync" @click="sync" :disabled="syncing">
+    <p v-if="commsProblems">
+      Problems reaching NVD.
+    </p>
+    <p v-if="syncing">Syncing now!</p>
   </div>
   <router-view></router-view>
   <ul>
@@ -21,7 +25,8 @@ export default {
   name: 'App',
   data() {
     return {
-      syncing: false
+      syncing: false,
+      commsProblems: false
     }
   },
   created() {
@@ -33,20 +38,38 @@ export default {
       self.syncing = true;
       getKeywordList()
         .then(function(keywordList){
-          return Promise.all(keywordList.map(function(i){
-            return pullKeyword(i.term)
-              .then(function(data){
-                self.syncing = false;
-                return addCveListByKeyword(data, i.term)
-              })
-              .then(function(cveIds) {
-                return addKeywordCveList(i.term, cveIds)
-              })
-              .catch(function() {
-                self.syncing = false;
+          return Promise.allSettled(keywordList.map(function(i, idx){
+            return self.pull(i.term, idx)
+              .catch(function(){
+                self.commsProblems = true;
               })
           }))
+          .then(function() {
+              self.syncing = false;
+              self.commsProblems = false;
+            })
+            .catch(function() {
+              self.syncing = false;
+              self.commsProblems = true;
+            })
       });
+    },
+    pull(term, idx) {
+      return new Promise(function(resolve){
+        setTimeout(function() {
+          pullKeyword(term)
+              .then(function(data){
+                return addCveListByKeyword(data, term)
+              })
+              .then(function(cveIds) {
+                return addKeywordCveList(term, cveIds)
+              })
+              .then(function(){
+                return resolve();
+              })
+         },
+        idx * 10 * 1000)
+      })
     }
   }
 }
