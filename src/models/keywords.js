@@ -55,7 +55,7 @@ const getKeywordList = () => {
         return new Promise((resolve, reject) => {
             let trans = db.transaction(['keywords'], 'readonly');
             trans.oncomplete = () => {
-                resolve(keywords);
+                resolve(keywords.reverse());
             };
             
             trans.onerror = e => {
