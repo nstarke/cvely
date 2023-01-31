@@ -3,7 +3,7 @@
       <h2>CVE List</h2>
       <ul>
           <li v-for="(item, idx) in cveList" v-bind:key="item.cveId">
-              {{ idx }} - {{ item.cveId }} found for term {{ item.term }} (Created {{ item.createdAt }})
+              {{ idx }} - {{ item.cveId }} found for term {{ item.term }}
           </li>
       </ul>
     </div>
