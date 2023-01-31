@@ -23,12 +23,8 @@ export default {
       syncing: false
     }
   },
-  watch: {
-    '$route' (to, from) {
-      if (to.path === '/cve-list' || from.path === '/cve-list') {
-        this.sync()
-      }
-    }
+  created() {
+    this.sync()
   },
   methods: {
     sync() {
