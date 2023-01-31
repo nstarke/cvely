@@ -22,6 +22,7 @@ const addCveListByKeyword = (cveList, keyword) => {
                             if (res) {
                                 if (!res.terms.includes(keyword)) {
                                     res.terms.push(keyword)
+                                    res.filtered = false;
                                     return store.put(res)
                                 }
                             } else {
@@ -56,8 +57,10 @@ const getCveList = () => {
             
             store.openCursor().onsuccess = e => {
                 let cursor = e.target.result;
-                if (cursor && !cursor.value.filtered) {
-                    cves.push(cursor.value)
+                if (cursor) {
+                    if (!cursor.value.filtered) {
+                        cves.push(cursor.value)
+                    }
                     cursor.continue();
                 }
             };
@@ -139,7 +142,9 @@ const getCveListByDate = (currentDate) => {
             cursorRequest.onsuccess = (e) => {
                 const cursor = e.target.result;
                 if (cursor) {
-                    cveList.push(cursor.value);
+                    if (!cursor.value.filtered){
+                        cveList.push(cursor.value);
+                    }
                     cursor.continue();
                 } 
             }
