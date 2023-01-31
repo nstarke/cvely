@@ -3,7 +3,7 @@
       <h2>CVE List</h2>
       <ul>
           <li v-for="(item, idx) in cveList" v-bind:key="item.cveId">
-              {{ idx + 1}} - {{ item.cveId }} found for terms {{ item.terms.join(', ') }}
+              {{ idx + 1}} - {{ item.cveId }} ({{ item.terms.join(', ') }})
               <router-link :to="'/cve/' + item.cveId">See Details</router-link>
               <input type="button" value="Remove CVE" @click="remove(item)">
           </li>
