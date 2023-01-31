@@ -1,7 +1,8 @@
 import Db from '../db/connection'
 
-const addCveByKeyword = (keyword) => {
-    return Db().then(function(db){
+const addCveListByKeyword = (cveList, keyword) => {
+    return Db()
+    .then(function(db){
         return new Promise((resolve, reject) => {
 
             let trans = db.transaction(['cves'], 'readwrite');
@@ -14,7 +15,9 @@ const addCveByKeyword = (keyword) => {
             }
     
             let store = trans.objectStore('cves');
-            store.add({ createdAt: new Date(), term: keyword });
+            cveList.map(cve => {
+                return store.put({ createdAt: new Date(), term: keyword, cveId: cve.cve.id, cve: cve.cve });
+            })
         });
     })
     .catch(function(e) {
@@ -81,8 +84,8 @@ const getCveByCveId = (cveId) => {
         return new Promise((resolve, reject) => {
 
             let trans = db.transaction(['cves'], 'readwrite');
-            trans.oncomplete = () => {
-                resolve();
+            trans.oncomplete = (e) => {
+                resolve(e.target.result);
             };
     
             trans.onerror = e => {
@@ -99,40 +102,9 @@ const getCveByCveId = (cveId) => {
     })
 }
 
-const checkCveByCveId = (cveId) => {
-    return Db().then(function(db){
-        return new Promise((resolve, reject) => {
-
-            let trans = db.transaction(['cves'], 'readonly');
-
-            trans.oncomplete = () => {
-                resolve();
-            };
-    
-            trans.onerror = e => {
-                reject(e);
-            }
-    
-            let store = trans.objectStore('cves');
-            const range = IDBKeyRange.only(cveId);
-            const index = store.index('cveId');
-            const cursorRequest = index.openCursor(range);
-            cursorRequest.onsuccess = (e) => {
-                const cursor = e.target.result;
-                resolve(!!cursor);
-            }
-        });
-    })
-    .catch(function(e){
-        console.log('checkCveByCveId failed');
-        console.error(e);
-    })
-}
-
 export { 
-    addCveByKeyword, 
+    addCveListByKeyword, 
     removeCve, 
     getCveByCveId,
-    checkCveByCveId,
     getCveList
  }

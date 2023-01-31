@@ -1,5 +1,8 @@
 <template>
   <h1>CVE Feed</h1>
+  <div>
+    <input type="button" value="Sync" @click="sync">
+  </div>
   <router-view></router-view>
   <ul>
     <li><router-link to="/">Home</router-link></li>
@@ -10,8 +13,24 @@
 </template>
 
 <script>
+import { pullKeyword } from './net/cve'
+import { getKeywordList } from './models/keywords'
+import { addCveListByKeyword } from './models/cves'
 export default {
-  name: 'App'
+  name: 'App',
+  methods: {
+    sync() {
+      getKeywordList()
+        .then(function(keywordList){
+          return Promise.all(keywordList.map(function(i){
+            return pullKeyword(i.term)
+              .then(function(data){
+                return addCveListByKeyword(data, i.term)
+            })
+          }))
+      });
+    }
+  }
 }
 </script>
 
