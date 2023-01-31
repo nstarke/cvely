@@ -13,6 +13,7 @@ export default () => {
         request.onupgradeneeded = e => {
             const db = e.target.result;
             let store = db.createObjectStore("cves", { keyPath: "cveId"});
+            store.createIndex("dateIdx", 'createdAt')
             store = db.createObjectStore("keywords", { autoIncrement: true, keyPath: 'id' });
             store.createIndex('termIdx', 'term', { unique: true });
         };
