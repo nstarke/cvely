@@ -138,7 +138,7 @@ const checkKeywordByTerm = (term) => {
     
             let store = trans.objectStore('keywords');
             const range = IDBKeyRange.only(term);
-            const index = store.index('fulltext');
+            const index = store.index('termIdx');
             const cursorRequest = index.openCursor(range);
             cursorRequest.onsuccess = (e) => {
                 const cursor = e.target.result;
