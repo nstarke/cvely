@@ -18,6 +18,22 @@ const pullKeyword = (term) => {
         })
 }
 
+const pullCve = (cveId) => {
+    return new Promise(function(resolve, reject){
+        return fetch("https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=" + cveId)
+            .then(function(res){
+                return res.json();
+            })
+            .then(function (data) {
+                resolve(data.vulnerabilities.pop())
+            })
+            .catch(function(e){
+                reject(e);
+            })
+        })
+}
+
 export {
-    pullKeyword
+    pullKeyword,
+    pullCve
 }

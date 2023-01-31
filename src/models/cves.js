@@ -1,5 +1,38 @@
 import Db from '../db/connection'
 
+const addCve = (cveData) => {
+    console.log(cveData);
+    return new Promise(function(resolve, reject){
+        return getCveByCveId(cveData.id)
+        .then((res) => {
+             return Db().then(function(db){
+                 let trans = db.transaction(['cves'], 'readwrite');
+                 trans.oncomplete = () => {
+                     resolve(cveData);
+                 }
+         
+                 trans.onerror = e => {
+                     reject(e);
+                 }
+         
+                 let store = trans.objectStore('cves');
+                 if (res) {
+                    res.filtered = true;
+                    store.put(res)
+                 } else {
+                    let newCve = {};
+                    newCve.createdAt = new Date().getTime()
+                    newCve.terms = []
+                    newCve.cveId = cveData.cve.id
+                    newCve.cve = cveData.cve
+                    newCve.filtered = false 
+                    store.put(newCve);
+                 }
+             })
+        })
+    })
+}
+
 const addCveListByKeyword = (cveList, keyword) => {
     let cveIds = [];
     return new Promise(function(resolve, reject){
@@ -157,6 +190,7 @@ const getCveListByDate = (currentDate) => {
 }
 
 export { 
+    addCve,
     addCveListByKeyword, 
     removeCve, 
     getCveByCveId,
