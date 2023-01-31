@@ -5,7 +5,7 @@
             <p>No Results</p>
         </div>
         <div>
-           Keyword created: {{ createdDate }}
+           Keyword created: {{ new Date(createdDate) }}
         </div>
         <ul>
             <li v-for="(item, idx) in cveList" v-bind:key="item">
