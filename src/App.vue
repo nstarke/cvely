@@ -24,7 +24,7 @@ export default {
     }
   },
   created() {
-    this.sync()
+    if (process.env.NODE_ENV === 'production') this.sync()
   },
   methods: {
     sync() {
@@ -41,6 +41,9 @@ export default {
                 return addKeywordCveList(i.term, cveIds)
               })
               .then(function(){
+                self.syncing = false;
+              })
+              .catch(function() {
                 self.syncing = false;
               })
           }))

@@ -71,7 +71,7 @@
             const self = this;
             return getKeywordList()
             .then(function(keywordList) {
-                self.keywordList = keywordList;
+                self.keywordList = keywordList.filter((i) => { return !i.filtered });
             })
         }
     },

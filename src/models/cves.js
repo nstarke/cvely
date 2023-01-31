@@ -25,7 +25,13 @@ const addCveListByKeyword = (cveList, keyword) => {
                                     return store.put(res)
                                 }
                             } else {
-                                return store.add({ createdAt: new Date(), terms: [keyword], cveId: cve.cve.id, cve: cve.cve });
+                                return store.add({ 
+                                    createdAt: new Date(), 
+                                    terms: [keyword], 
+                                    cveId: cve.cve.id, 
+                                    cve: cve.cve, 
+                                    filtered: false 
+                                });
                             }
                         })
                     })
@@ -50,7 +56,7 @@ const getCveList = () => {
             
             store.openCursor().onsuccess = e => {
                 let cursor = e.target.result;
-                if (cursor) {
+                if (cursor && !cursor.value.filtered) {
                     cves.push(cursor.value)
                     cursor.continue();
                 }
@@ -66,7 +72,6 @@ const getCveList = () => {
 const removeCve = (id) => {
     return Db().then(function(db){
         return new Promise((resolve, reject) => {
-
             let trans = db.transaction(['cves'], 'readwrite');
             trans.oncomplete = () => {
                 resolve();
@@ -77,7 +82,13 @@ const removeCve = (id) => {
             }
     
             let store = trans.objectStore('cves');
-            store.delete(id);
+            store.get(id).onsuccess = (e) => {
+                const cve = e.target.result;
+                if (cve) {
+                    cve.filtered = true;
+                    store.put(cve)
+                }
+            }
         });
     })
     .catch(function(e){
