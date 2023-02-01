@@ -61,12 +61,12 @@ export default {
               .then(function(data){
                 if (data.length === 0) return resolve();
                 return addCveListByKeyword(data, term)
-              })
-              .then(function(cveIds) {
-                return addKeywordCveList(term, cveIds)
-              })
-              .then(function(){
-                return resolve();
+                  .then(function(cveIds) {
+                    return addKeywordCveList(term, cveIds)
+                  })
+                  .then(function(){
+                    return resolve();
+                  })
               })
          },
         idx * 10 * 1000)

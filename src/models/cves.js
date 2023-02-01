@@ -36,6 +36,7 @@ const addCve = (cveData) => {
 const addCveListByKeyword = (cveList, keyword) => {
     let cveIds = [];
     return new Promise(function(resolve, reject){
+        if (cveList.length === 0) return resolve(cveIds);
         return Promise.all(cveList.map(cve => {
             if (!cve.filtered) cveIds.push(cve.cve.id);
             return getCveByCveId(cve.cve.id)

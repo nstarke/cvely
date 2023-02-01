@@ -8,7 +8,7 @@ const addKeywordCveList = (keyword, cveList) => {
         
                     let trans = db.transaction(['keywords'], 'readwrite');
                     trans.oncomplete = () => {
-                        resolve();
+                        resolve(cveList);
                     };
             
                     trans.onerror = e => {
