@@ -2,6 +2,7 @@
     <div>
       <label for="start">Show CVEs from this Date:</label>
       <input type="date" id="start" v-model="createdDate">
+      <input class="btn btn-secondary" value="Change Date" @click="changeDate">
       <h2>CVE List for {{ createdDate }}</h2>
       <p v-if="cveList.length === 0">No CVEs for this date.</p>
       <ul class="container">
@@ -19,15 +20,9 @@
     name: 'DatePage',
     data() {
       return {
-        createdDate: "",
+        createdDate: new Date(),
         cveList: []
       }
-    },
-
-    watch: {
-        createdDate() {
-            this.changeDate(this.currentDate)
-        }
     },
     methods: {
       getCveList(currentDate) {
