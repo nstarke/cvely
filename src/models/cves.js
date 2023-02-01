@@ -74,6 +74,47 @@ const addCveListByKeyword = (cveList, keyword) => {
     })
 }
 
+const addCveListByKeywordForDate = (cveList, keyword, date) => {
+    let cveIds = [];
+    return new Promise(function(resolve, reject){
+        if (cveList.length === 0) return resolve(cveIds);
+        return Promise.all(cveList.map(cve => {
+            if (!cve.filtered) cveIds.push(cve.cve.id);
+            return getCveByCveId(cve.cve.id)
+                .then(res => {
+                    return Db()
+                        .then(function(db){
+                            let trans = db.transaction(['cves'], 'readwrite');
+                            trans.oncomplete = () => {
+                                resolve(cveIds);
+                            }
+                    
+                            trans.onerror = e => {
+                                reject(e);
+                            }
+                    
+                            let store = trans.objectStore('cves');
+                            if (res) {
+                                if (!res.terms.includes(keyword)) {
+                                    res.terms.push(keyword)
+                                    res.filtered = false;
+                                    return store.put(res)
+                                }
+                            } else {
+                                return store.add({ 
+                                    createdAt: date.getTime(), 
+                                    terms: [keyword], 
+                                    cveId: cve.cve.id, 
+                                    cve: cve.cve, 
+                                    filtered: false 
+                                });
+                            }
+                        })
+                    })
+        }))
+    })
+}
+
 const getCveList = () => {
 	return Db().then(function(db){
         return new Promise((resolve, reject) => {
@@ -193,6 +234,7 @@ const getCveListByDate = (currentDate) => {
 export { 
     addCve,
     addCveListByKeyword, 
+    addCveListByKeywordForDate,
     removeCve, 
     getCveByCveId,
     getCveList,

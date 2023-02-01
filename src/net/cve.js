@@ -18,6 +18,24 @@ const pullKeyword = (term) => {
         })
 }
 
+const pullKeywordForDate = (term, day) => {
+    return new Promise(function(resolve, reject){
+        day = new Date(day - (day % 86400000))
+        let end = new Date(day);
+        end.setDate(day.getDate() + 1)
+        fetch("https://services.nvd.nist.gov/rest/json/cves/2.0?pubStartDate="+ day.toISOString() + "&pubEndDate=" + end.toISOString() + "&keywordSearch=" + term)
+            .then(function(res){
+                return res.json();
+            })
+            .then(function (data) {
+                resolve(data.vulnerabilities)
+            })
+            .catch(function(e){
+                reject(e);
+            })
+        })
+}
+
 const pullCve = (cveId) => {
     return new Promise(function(resolve, reject){
         return fetch("https://services.nvd.nist.gov/rest/json/cves/2.0?cveId=" + cveId)
@@ -35,5 +53,6 @@ const pullCve = (cveId) => {
 
 export {
     pullKeyword,
+    pullKeywordForDate,
     pullCve
 }
