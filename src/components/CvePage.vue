@@ -3,11 +3,11 @@
       <h2>{{ cveId }}</h2>
       <div v-if="!!cve.cve">
         <p>
-          {{ cve.cve.descriptions.find(e => e.lang == "en" ).value }}
+          {{ description }}
         </p>
-        <p>Published: {{ new Date(cve.cve.published) }}</p>
+        <p v-if="published">Published: {{ published }}</p>
         <p>Cached in CVE-Feed: {{ new Date(cve.createdAt) }}</p>
-        <p>Discovered for Keywords: {{ cve.terms.join(", ") }}</p>
+        <p v-if="cve.terms.length > 0">Discovered for Keywords: {{ cve.terms.join(", ") }}</p>
         <a :href="'https://nvd.nist.gov/vuln/detail/' + cve.cveId">NVD Link</a>
       </div>
     </div>
@@ -19,7 +19,9 @@
     name: 'CvePage',
     data() {
       return {
-        cve: {}
+        cve: {},
+        description: "",
+        published: ""
       }
     },
     props: ['cveId'],
@@ -29,6 +31,8 @@
         getCveByCveId(this.cveId)
           .then(function(cve){
             self.cve = cve
+            self.description = cve.cve.descriptions ? cve.cve.descriptions.find(e => e.lang == "en" ).value : cve.cve.description.description_data.find(e => e.lang == "en").value
+            self.published = cve.cve.published ? new Date(cve.cve.published) : (cve.cve.publishedDate ? new Date(cve.cve.publishedDate) : "")
           })
       }
     },

@@ -51,8 +51,24 @@ const pullCve = (cveId) => {
         })
 }
 
+function pullYearFromCveCdn(cdnUrl, year) {
+    return new Promise(function(resolve, reject){
+        return fetch(cdnUrl + "/nvdcve-1.1-" + year + ".json")
+            .then(function(res){
+                return res.json();
+            })
+            .then(function (data) {
+                resolve(data.CVE_Items)
+            })
+            .catch(function(e){
+                reject(e);
+            })
+        })
+}
+
 export {
     pullKeyword,
     pullKeywordForDate,
-    pullCve
+    pullCve,
+    pullYearFromCveCdn
 }

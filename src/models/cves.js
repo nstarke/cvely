@@ -1,9 +1,8 @@
 import Db from '../db/connection'
 
 const addCve = (cveData) => {
-    console.log(cveData);
     return new Promise(function(resolve, reject){
-        return getCveByCveId(cveData.id)
+        return getCveByCveId(cveData.cve.id)
         .then((res) => {
              return Db().then(function(db){
                  let trans = db.transaction(['cves'], 'readwrite');
@@ -116,6 +115,7 @@ const addCveListByKeywordForDate = (cveList, keyword, date) => {
 }
 
 const getCveList = () => {
+    let limit = 50;
 	return Db().then(function(db){
         return new Promise((resolve, reject) => {
             let trans = db.transaction(['cves'], 'readonly');
@@ -132,9 +132,10 @@ const getCveList = () => {
             
             store.openCursor().onsuccess = e => {
                 let cursor = e.target.result;
-                if (cursor) {
-                    if (!cursor.value.filtered) {
+                if (cursor && limit) {
+                    if (!cursor.value.filtered && cursor.value.terms.length) {
                         cves.push(cursor.value)
+                        limit--
                     }
                     cursor.continue();
                 }
@@ -231,6 +232,41 @@ const getCveListByDate = (currentDate) => {
     })
 }
 
+const addCveList = (cveList) => {
+    return new Promise(function(resolve, reject){
+        return Promise.all(cveList.map(cve => {
+            return getCveByCveId(cve.cve.CVE_data_meta.ID)
+                .then(res => {
+                    return Db()
+                        .then(function(db){
+                            let trans = db.transaction(['cves'], 'readwrite');
+                            trans.oncomplete = () => {
+                                resolve();
+                            }
+                    
+                            trans.onerror = e => {
+                                reject(e);
+                            }
+                    
+                            let store = trans.objectStore('cves');
+                            if (res) {
+                                res.filtered = false;
+                                return store.put(res)
+                            } else {
+                                return store.add({ 
+                                    createdAt: (new Date(cve.publishedDate)).getTime(), 
+                                    terms: [], 
+                                    cveId: cve.cve.CVE_data_meta.ID, 
+                                    cve: cve.cve, 
+                                    filtered: false 
+                                });
+                            }
+                        })
+                    })
+        }))
+    })
+}
+
 export { 
     addCve,
     addCveListByKeyword, 
@@ -238,5 +274,6 @@ export {
     removeCve, 
     getCveByCveId,
     getCveList,
-    getCveListByDate
+    getCveListByDate,
+    addCveList
  }

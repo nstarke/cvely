@@ -13,6 +13,7 @@
     <li><router-link to="/keyword-list">Keywords</router-link></li>
     <li><router-link to="/cve-list">CVE List</router-link></li>
     <li><router-link to="/date">CVEs by Date</router-link></li>
+    <li><router-link to="/import">Import</router-link></li>
     <li><router-link to="/about">About</router-link></li>
   </ul>
 </template>
@@ -28,9 +29,6 @@ export default {
       syncing: false,
       commsProblems: false
     }
-  },
-  created() {
-    if (process.env.NODE_ENV === 'production') this.sync()
   },
   methods: {
     sync() {

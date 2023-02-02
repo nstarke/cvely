@@ -4,6 +4,7 @@
       <div class="controls">
           <input placeholder="New CVE" type="text" v-model="oneOffCve" @blur="check" v-on:keyup="check">
           <input class="btn btn-primary" type="button" @click="add" value="Add" :disabled="!newCveIsValidId">
+          <input class="btn btn-secondary" type="button" @click="search" value="Search" :disabled="!newCveIsValidId">
       </div>
       <div v-if="noCveFound">
         <p>No CVE Found</p>
@@ -20,7 +21,7 @@
   </template>
   
   <script>
-  import { getCveList, removeCve, addCve } from '../models/cves'
+  import { getCveList, removeCve, addCve, getCveByCveId } from '../models/cves'
   import { checkKeywordByTerm, addKeywordCveList } from '../models/keywords'
   import { pullCve } from '../net/cve'
   export default {
@@ -40,6 +41,14 @@
       }
     },
     methods: {
+      search() {
+        const self = this;
+        getCveByCveId(this.oneOffCve)
+          .then(function(cve){
+            console.log(cve);
+            self.cveList = [cve]
+          })
+      },
       add() {
         const self = this;
         pullCve(this.oneOffCve)
