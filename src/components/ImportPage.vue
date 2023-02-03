@@ -3,7 +3,7 @@
       <h2>Import CVE Data</h2>
     </div>
     <div class="controls">
-        <input type="text" placeholder="CDN URL" v-model="cdnUrl">
+        <input type="text" placeholder="CDN URL Override" v-model="cdnUrl">
         <select v-model="selectedYear">
             <option v-for="year in yearList" v-bind:key="year">{{ year }}</option>
         </select>
@@ -53,7 +53,7 @@
         pullFromCdn() {
             const self = this;
             self.syncing = true;
-            pullYearFromCveCdn(self.cdnUrl, self.selectedYear)
+            pullYearFromCveCdn(self.cdnUrl || "https://cve-feed.netlify.app", self.selectedYear)
                 .then(function(cveList){
                     return addCveList(cveList)
                 })
