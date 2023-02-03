@@ -8,6 +8,7 @@
             <option v-for="year in yearList" v-bind:key="year">{{ year }}</option>
         </select>
         <input @click="pullFromCdn" type="button" class="btn btn-primary" value="Sync from CDN URL" :disabled="syncing">
+        <input @click="pullAllFromCdn" type="button" class="btn btn-danger" value="Sync All Years from CDN URL" :disabled="syncing">
     </div>
     <div class="status" v-if="syncing">
         <p>Syncing for {{ selectedYear }}</p>
@@ -63,6 +64,23 @@
                 .catch(function(){
                     self.syncing = false;
                 })
+        },
+        async pullAllFromCdn() {
+            const self = this;
+            self.syncing = true;
+            Promise.allSettled(self.yearList.map(async function(year){
+                self.selectedYear = year
+                await pullYearFromCveCdn(self.cdnUrl || "https://cve-feed.netlify.app", year)
+                    .then(async function(cveList){
+                        return await addCveList(cveList)
+                    })
+            }))
+            .then(function(){
+                self.syncing = false;
+            })
+            .catch(function() {
+                self.syncing = false;
+            })
         }
     }
   }
